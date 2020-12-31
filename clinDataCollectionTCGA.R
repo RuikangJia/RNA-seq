@@ -17,6 +17,7 @@ dataCollection = function(fileName,outputDir){
     # 读取数据
     data = read.table(fileName,sep = "\t",header = T,row.names = 1)
     data = data.frame(t(data))
+    rownames(data) = toupper(gsub(".","-",rownames(data),fixed = T))
     mySave(data,fileName,outputDir)
 }
 
@@ -30,7 +31,7 @@ scriptName = basename(wholeName)
 # 设置路径
 setwd(pathName)
 # 文件夹名称
-dirName = gsub(".R$","",scriptName)
+dirName = gsub(".R","",scriptName)
 # 创建脚本文件同名文件夹
 if(!dir.exists(dirName)){
     dir.create(dirName)

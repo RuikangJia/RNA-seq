@@ -21,8 +21,9 @@ toNum = function(data){
 }
 dataCollection = function(fileName,outputDir){
     # 读取数据
-    data = read.table(fileName,sep = "\t",header = T,row.names = 1)
+    data = read.table(fileName,sep = "\t",header = T,row.names = 1,encoding = "Latin-1")
     data = toNum(data)
+    colnames(data) = gsub(".","-",colnames(data),fixed = T)
     mySave(data,fileName,outputDir)
     # RSEM表达值进行log转换
     if(fileName == "RSEM.txt"){
@@ -47,7 +48,7 @@ if(!dir.exists(dirName)){
     dir.create(dirName)
 }
 # 输出文件路径
-outputDir = gsub(".R$","/",wholeName)
+outputDir = gsub(".R","/",wholeName)
 
 
 # 2数据整理
@@ -55,5 +56,4 @@ outputDir = gsub(".R$","/",wholeName)
 fileNames = dir()[grep(".txt",dir())]
 # 整理
 lapply(fileNames,dataCollection,outputDir)
-
 
