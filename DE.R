@@ -23,7 +23,7 @@ DECalculation = function(data,colData){
     res = results(dds)
     # ¸ù¾ÝPÖµÅÅÐò
     res  =  res[order(res$padj),]
-    res
+    return(res)
 }
 DEFilter = function(res,lfc = 1,p = 0.05){
     res = data.frame(res)

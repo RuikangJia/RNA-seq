@@ -31,8 +31,7 @@ dataCollection = function(data){
     rownames(data) = toupper(rownames(data))
     return(data)
 }
-dfSave = function(data,fileName,outputDir){
-    dataName = gsub(".txt$","",fileName)
+dfSave = function(data,dataName,outputDir){
     # 保存excel
     write.csv(data,paste(outputDir,dataName,".csv",sep = ""))
     # 数据命名
@@ -60,6 +59,7 @@ dataCollectedList = lapply(dataList,dataCollection)
 
 
 # 4保存
-for(i in 1:length(fileNames)){
-    dfSave(dataCollectedList[[i]],fileNames[i],outputDir)
+dataNames = gsub(".txt","",fileNames)
+for(i in 1:length(dataNames)){
+    dfSave(dataCollectedList[[i]],dataNames[i],outputDir)
 }
