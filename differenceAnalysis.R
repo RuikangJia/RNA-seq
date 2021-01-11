@@ -61,11 +61,11 @@ DEGFilter = function(data,LFC = 1,p = 0.05){
     data = subset(data,abs(log2FoldChange) >= LFC & padj < p)
     return(data)
 }
-volcanicPlot = function(drawData,dataName,outputDir){
+volcanicPlot = function(drawData,dataName,outputDir,LFC = 1,p = 0.05){
     # 去除NA
     drawData = subset(drawData,complete.cases(drawData))
     # p值区分不同基因，且因子化
-    drawData$threshold = as.factor(ifelse(drawData$padj < 0.05 & abs(drawData$log2FoldChange) >= 1, ifelse(drawData$log2FoldChange>= 1 ,'Up','Down'),'NoSignifi'))
+    drawData$threshold = as.factor(ifelse(drawData$padj < p & abs(drawData$log2FoldChange) >= LFC, ifelse(drawData$log2FoldChange>= LFC ,'Up','Down'),'NoSignifi'))
     drawData$threshold = factor(drawData$threshold,levels = c("Down","NoSignifi","Up"),ordered = T)
     #ggplot具体绘图
     ggplot(data = drawData, aes(x = log2FoldChange, y = -log10(padj), color=threshold)) +
