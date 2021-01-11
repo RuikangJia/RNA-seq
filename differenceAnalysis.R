@@ -61,11 +61,9 @@ DEFilter = function(DERes,lfc = 1,p = 0.05){
     deGenes = subset(DERes,abs(log2FoldChange) > lfc & padj < p)
     return(deGenes)
 }
-volcanicPlot = function(res,dataName,outputDir){
+volcanicPlot = function(drawData,dataName,outputDir){
     # 去除NA
-    res = subset(res,complete.cases(res))
-    # 构建绘图使用的数据集
-    drawData = data.frame(compound = res@rownames,res@listData)
+    drawData = subset(drawData,complete.cases(drawData))
     # p值区分不同基因，且因子化
     drawData$threshold = as.factor(ifelse(drawData$padj < 0.05 & abs(drawData$log2FoldChange) >= 1, ifelse(drawData$log2FoldChange>= 1 ,'Up','Down'),'NoSignifi'))
     drawData$threshold = factor(drawData$threshold,levels = c("Down","NoSignifi","Up"),ordered = T)
@@ -73,7 +71,7 @@ volcanicPlot = function(res,dataName,outputDir){
     ggplot(data = drawData, aes(x = log2FoldChange, y = -log10(padj), color=threshold)) +
         geom_point(alpha=0.5, size=1) +
         scale_color_manual(values=c("blue","grey","red")) +
-        ylab("-log10(Pvalue)")+
+        ylab("-log10(Padj)")+
         xlab("log2(FoldChange)")+
         geom_vline(xintercept = c(-1,1),lty = 4,col = "black",lwd = 0.8)+
         geom_hline(yintercept = -log10(0.05),lty = 4,col = "black",lwd = 0.8)+
@@ -112,7 +110,8 @@ DERes = DECalculation(data,groupInfo)
 # 筛选差异基因
 deGenes = DEFilter(DERes,1,.05)
 # 绘制火山图
-volcanicPlot(DERes,"volcanic",outputDir)
+drawData = data.frame(DERes)
+volcanicPlot(drawData,"volcanic",outputDir)
 
 
 # 4保存变量
