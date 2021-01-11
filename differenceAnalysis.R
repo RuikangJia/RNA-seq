@@ -3,10 +3,11 @@
 # 输入：
     # rawCount.RData:基因表达数据未标准化
 # 输出：
-    # deGene.csv:差异基因信息
-    # deGene.RData:差异基因信息
-    # DERes.csv:所有基因LFC计算结果
-    # DERes.RData:所有基因LFC计算结果
+    # calcuRes.csv、calcuRes.RData:所有基因LFC计算结果
+    # DEG.csv、DEG.RData:差异基因LFC计算结果
+    # DEGSorted.csv、DEGSorted.csv：差异基因LFC排序
+    # upRegulated.csv、upRegulated.csv：上调基因基因LFC排序
+    # downRegulated.csv、downRegulated.csv：下调基因基因LFC排序
     # volanic.png:差异基因火山图
 # 工具包
 library(DESeq2)
@@ -56,10 +57,9 @@ DECalculation = function(data,colData){
     res  =  res[order(res$padj),]
     return(res)
 }
-DEFilter = function(DERes,lfc = 1,p = 0.05){
-    DERes = data.frame(DERes)
-    deGenes = subset(DERes,abs(log2FoldChange) > lfc & padj < p)
-    return(deGenes)
+DEGFilter = function(data,LFC = 1,p = 0.05){
+    data = subset(data,abs(log2FoldChange) >= LFC & padj < p)
+    return(data)
 }
 volcanicPlot = function(drawData,dataName,outputDir){
     # 去除NA
@@ -106,14 +106,22 @@ data = data.frame(t(data),check.names = F)
 # 分组信息
 groupInfo = groupInfo(data)
 # 计算LFC
-DERes = DECalculation(data,groupInfo)
+calcuRes = DECalculation(data,groupInfo)
+calcuRes = data.frame(calcuRes)
 # 筛选差异基因
-deGenes = DEFilter(DERes,1,.05)
+DEG = DEGFilter(calcuRes)
+# LFC排序
+DEGSorted = DEG[order(-abs(DEG$log2FoldChange)),]
+# 上下调
+upRegulated = subset(DEGSorted,DEGSorted$log2FoldChange > 0)
+downRegulated = subset(DEGSorted,DEGSorted$log2FoldChange < 0)
 # 绘制火山图
-drawData = data.frame(DERes)
-volcanicPlot(drawData,"volcanic",outputDir)
+volcanicPlot(calcuRes,"volcanic",outputDir)
 
 
 # 4保存变量
-dfSave(DERes,"DERes",outputDir)
-dfSave(deGenes,"deGenes",outputDir)
+dfSave(calcuRes,"calcuRes",outputDir)
+dfSave(DEG,"DEG",outputDir)
+dfSave(DEGSorted,"DEGSorted",outputDir)
+dfSave(upRegulated,"upRegulated",outputDir)
+dfSave(downRegulated,"downRegulated",outputDir)
