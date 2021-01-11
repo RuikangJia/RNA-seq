@@ -70,7 +70,7 @@ volcanicPlot = function(res,dataName,outputDir){
     drawData$threshold = as.factor(ifelse(drawData$padj < 0.05 & abs(drawData$log2FoldChange) >= 1, ifelse(drawData$log2FoldChange>= 1 ,'Up','Down'),'NoSignifi'))
     drawData$threshold = factor(drawData$threshold,levels = c("Down","NoSignifi","Up"),ordered = T)
     #ggplot¾ßÌå»æÍ¼
-    ggplot(data = drawData, aes(x = log2FoldChange, y = -log10(pvalue), color=threshold)) +
+    ggplot(data = drawData, aes(x = log2FoldChange, y = -log10(padj), color=threshold)) +
         geom_point(alpha=0.5, size=1) +
         scale_color_manual(values=c("blue","grey","red")) +
         ylab("-log10(Pvalue)")+
